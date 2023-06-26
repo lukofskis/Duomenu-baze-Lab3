@@ -1,0 +1,134 @@
+﻿@model Org.Ktu.Isk.P175B602.Autonuoma.Models.SportoSalesReport.Report
+@* this will also be used as page title in main layout *@
+@{ ViewData["title"] = "Sporto Saliu ataskaita"; }
+
+@* content header *@
+<div class="main-content-header">
+	<span class="title">@ViewData["title"]</span>
+</div>
+
+@* content itself *@
+<div class="main-content-rep">
+@using( Html.BeginForm(FormMethod.Get, new { @class="rep" }) )
+{
+	<p><strong>Parengta:</strong> @String.Format("{0:yyyy-MM-dd HH:mm}", DateTime.Now)</p>
+
+	@* filter section *@
+	<div class="filter">
+		<div class="fields">
+				<div class="field">
+					<label>Nuo:</label>
+					@Html.EditorFor(m => m.I_DSkaiciusN)
+				</div>
+				<div class="field">
+					<label>Iki:</label>
+					@Html.EditorFor(m => m.I_DSkaiciusI)
+				</div>
+				<div class="field">
+					<label>Busena:</label>
+					@Html.DropDownListFor(m => m.I_Pareiga, Model.Pareigos, (string)ViewData["none-chosen"])
+					@Html.ValidationMessageFor(m => m.I_Pareiga, "")
+				</div>
+				<div class="field">
+					<label>Etatas:</label>
+					@Html.EditorFor(m => m.I_Etatas)
+				</div>
+
+		</div>
+
+		<div class="buttons">
+			<button class="btn btn-success"><i class="fa-solid fa-filter"></i> Atrinkti</button>
+		</div>
+	</div>
+
+	@* report data *@
+	<table class="report">
+		<thead>
+			<tr>
+				<th>@Html.DisplayNameFor(m => m.Ataskaitos[0].Miestas)</th>
+				<th>@Html.DisplayNameFor(m => m.Ataskaitos[0].Pavadinimas)</th>
+				<th>@Html.DisplayNameFor(m => m.Ataskaitos[0].Pareigos)</th>
+				<th>@Html.DisplayNameFor(m => m.Ataskaitos[0].BendrasPareiguSkaicius)</th>
+				
+				<th>@Html.DisplayNameFor(m => m.Ataskaitos[0].MaziausiasPareigosEtatas)</th>
+				<th>@Html.DisplayNameFor(m => m.Ataskaitos[0].DidziausiasPareigosEtatas)</th>
+				<th>@Html.DisplayNameFor(m => m.Ataskaitos[0].VidutinisPareigosEtatas)</th>
+				
+
+			</tr>
+		</thead>
+		<tbody>
+			@if( Model.Ataskaitos.Count == 0 )
+			{
+				@* no data message *@
+				<tr class="no-data-msg">
+					<td colspan="6" align="center">Nera sporto saliu</td>
+				</tr>
+			}
+			else 
+			{
+				@* groups *@
+				var prev = Model.Ataskaitos[0].ID;
+				@for( int i = 0; i < Model.Ataskaitos.Count; i++ )
+				{
+					@* group header *@
+					if( i == 0 || Model.Ataskaitos[i].ID != Model.Ataskaitos[i-1].ID )
+					{
+						<tr>
+								<td>@Html.DisplayFor(m => Model.Ataskaitos[i].Miestas)</td>
+								<td>@Html.DisplayFor(m => Model.Ataskaitos[i].Pavadinimas)</td>
+								<td>@Html.DisplayFor(m => Model.Ataskaitos[i].Pareigos)</td>
+								<td>@Html.DisplayFor(m => Model.Ataskaitos[i].BendrasPareiguSkaicius)</td>
+								<td>@Html.DisplayFor(m => Model.Ataskaitos[i].VidutinisPareigosEtatas)</td>
+								<td>@Html.DisplayFor(m => Model.Ataskaitos[i].MaziausiasPareigosEtatas)</td>
+								<td>@Html.DisplayFor(m => Model.Ataskaitos[i].DidziausiasPareigosEtatas)</td>
+								
+
+						</tr>
+					}
+					else
+					{
+							<tr>
+								<td>@Html.DisplayFor(m => Model.Ataskaitos[i].tekstas)</td>
+								<td>@Html.DisplayFor(m => Model.Ataskaitos[i].tekstas)</td>
+								<td>@Html.DisplayFor(m => Model.Ataskaitos[i].Pareigos)</td>
+								<td>@Html.DisplayFor(m => Model.Ataskaitos[i].BendrasPareiguSkaicius)</td>
+								<td>@Html.DisplayFor(m => Model.Ataskaitos[i].VidutinisPareigosEtatas)</td>
+								<td>@Html.DisplayFor(m => Model.Ataskaitos[i].MaziausiasPareigosEtatas)</td>
+								<td>@Html.DisplayFor(m => Model.Ataskaitos[i].DidziausiasPareigosEtatas)</td>
+								
+
+							</tr>
+					}
+
+						@* group total *@
+						if (i == Model.Ataskaitos.Count - 1 || Model.Ataskaitos[i].ID != Model.Ataskaitos[i + 1].ID)
+						{
+							<tr>
+								<td colspan="2"></td>
+								<td><b>@Html.DisplayFor(m => Model.Ataskaitos[i].tekstas2)</b></td>
+								<td><b>@Html.DisplayFor(m => Model.Ataskaitos[i].DarbuotojaiParduotuveje)</b></td>
+								<td>@Html.DisplayFor(m => Model.Ataskaitos[i].tekstas)</td>
+								<td>@Html.DisplayFor(m => Model.Ataskaitos[i].tekstas)</td>
+								<td>@Html.DisplayFor(m => Model.Ataskaitos[i].tekstas)</td>
+
+							</tr>
+						}
+				}
+
+				@* grand total *@
+				<tr class="grand-total-header">
+					<td colspan="7" align="center"><b>Bendras darbuotoju skaicius</b></td>
+				</tr>
+
+				<tr>
+					<td colspan="6" align="center"></td>
+					<td>
+						@Html.DisplayFor(m => Model.BendrasDarbuotojuSkaicius)
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+</div>
